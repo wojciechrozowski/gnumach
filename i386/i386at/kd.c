@@ -122,10 +122,6 @@ void	(*kd_dsetcursor)() = charsetcursor;
 				/* set cursor position on displayed page */
 void	(*kd_dreset)() = kd_noopreset;	/* prepare for reboot */
 
-/* forward declarations */
-unsigned char kd_getdata(), state2leds();
-
-
 /*
  * Globals used for both character-based controllers and bitmap-based
  * controllers.  Default is EGA.
@@ -450,9 +446,7 @@ kdopen(dev, flag, ior)
 	io_req_t ior;
 {
 	struct 	tty	*tp;
-	void	kdstart();
 	spl_t	o_pri;
-	void	kdstop();
 
 	tp = &kd_tty;
 	o_pri = spltty();
@@ -567,7 +561,7 @@ kdmmap(dev, off, prot)
 	off_t off;
 	int prot;
 {
-	if ((u_int) off >= (128*1024))
+	if (off >= (128*1024))
 		return(-1);
 
 	/* Get page frame number for the page to be mapped. */
@@ -1155,7 +1149,6 @@ kdstop(tp, flags)
 void
 kdinit()
 {
-	void	kd_xga_init();
 	unsigned char	k_comm;		/* keyboard command byte */
 
 	if (kd_initialized)
