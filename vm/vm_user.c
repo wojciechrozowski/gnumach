@@ -436,3 +436,117 @@ kern_return_t vm_wire(host, map, start, size, access)
 				    round_page(start+size),
 				    access);
 }
+
+void vm_pages_release(npages, pages, external)
+	int			npages;
+	vm_page_t		*pages;
+	boolean_t		external;
+{
+	int i;
+
+	for (i = 0; i < npages; i++)
+	{
+		vm_page_release (pages[i], external);
+	}
+}
+
+kern_return_t experimental_vm_allocate_contiguous(host_priv, map, result_vaddr, result_paddr, size)
+	host_t			host_priv;
+	vm_map_t		map;
+	vm_address_t		*result_vaddr;
+	vm_address_t		*result_paddr;
+	vm_size_t		size;
+{
+	extern vm_size_t	vm_page_big_pagenum;
+	extern vm_offset_t	phys_first_addr;
+	extern vm_offset_t	phys_last_addr;
+
+	int			npages;
+	int			i;
+	vm_page_t		*pages;
+	vm_object_t		object;
+	vm_map_entry_t		entry;
+	kern_return_t		kr;
+	vm_address_t		vaddr;
+	vm_offset_t		offset = 0;
+
+	if (host_priv == HOST_NULL)
+		return KERN_INVALID_HOST;
+
+	if (map == VM_MAP_NULL)
+		return KERN_INVALID_TASK;
+
+	size = round_page(size);
+
+	/* We allocate the contiguous physical pages for the buffer. */
+
+	npages = size / PAGE_SIZE;
+	pages = (vm_page_t) kalloc (npages * sizeof (vm_page_t));
+	if (pages == NULL)
+	{
+		return KERN_RESOURCE_SHORTAGE;
+	}
+	
+	if (vm_page_big_pagenum == 0)
+		vm_page_big_pagenum = atop(phys_last_addr - phys_first_addr);
+
+	kr = vm_page_grab_contiguous_pages(npages, pages, NULL, TRUE);
+	if (kr)
+	{
+		kfree (pages, npages * sizeof (vm_page_t));
+		return kr;
+	}
+
+	/* Allocate the object 
+	 * and find the virtual address for the DMA buffer */
+
+	object = vm_object_allocate(size);
+	vm_map_lock(map);
+	/* TODO user_wired_count might need to be set as 1 */
+	kr = vm_map_find_entry(map, &vaddr, size, (vm_offset_t) 0,
+			       VM_OBJECT_NULL, &entry);
+	if (kr != KERN_SUCCESS) 
+	{
+		vm_map_unlock(map);
+		vm_object_deallocate(object);
+		kfree (pages, npages * sizeof (vm_page_t));
+		vm_pages_release (npages, pages, TRUE);
+		return kr;
+	}
+	        
+	entry->object.vm_object = object;
+	entry->offset = 0;
+
+	/* We can unlock map now.  */
+	vm_map_unlock(map);
+
+	/* We have physical pages we need and now we need to do the mapping. */
+
+	pmap_pageable (map->pmap, vaddr, vaddr + size, FALSE);
+
+	*result_vaddr = vaddr;
+	*result_paddr = pages[0]->phys_addr;
+
+	for (i = 0; i < npages; i++)
+	{
+		vm_object_lock(object);
+		vm_page_lock_queues();
+		vm_page_insert(pages[i], object, offset);
+		vm_page_wire(pages[i]);
+		vm_page_unlock_queues();
+		vm_object_unlock(object);
+
+		/* Enter it in the kernel pmap */
+		PMAP_ENTER(map->pmap, vaddr, pages[i], VM_PROT_DEFAULT, TRUE);
+
+		vm_object_lock(object);
+		PAGE_WAKEUP_DONE(pages[i]);
+		vm_object_unlock(object);
+
+		vaddr += PAGE_SIZE;
+		offset += PAGE_SIZE;
+	}
+
+	kfree ((vm_offset_t) pages, npages * sizeof (vm_page_t));
+	return KERN_SUCCESS;
+}
