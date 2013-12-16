@@ -95,15 +95,15 @@ boolean_t	db_ed_style = TRUE;
  */
 int
 db_cmd_search(name, table, cmdp)
-	char *		name;
-	struct db_command	*table;
-	struct db_command	**cmdp;	/* out */
+	const char *		name;
+	const struct db_command	*table;
+	const struct db_command	**cmdp;	/* out */
 {
-	struct db_command	*cmd;
+	const struct db_command	*cmd;
 	int		result = CMD_NONE;
 
 	for (cmd = table; cmd->name != 0; cmd++) {
-	    char *lp;
+	    const char *lp;
 	    char *rp;
 	    int  c;
 
@@ -142,9 +142,9 @@ db_cmd_search(name, table, cmdp)
 
 void
 db_cmd_list(table)
-	struct db_command *table;
+	const struct db_command *table;
 {
-	struct db_command *cmd;
+	const struct db_command *cmd;
 
 	for (cmd = table; cmd->name != 0; cmd++) {
 	    db_printf("%-12s", cmd->name);
@@ -383,7 +383,7 @@ struct db_command *ptr;
 struct db_command	*db_last_command = 0;
 
 void
-db_help_cmd()
+db_help_cmd(void)
 {
 	struct db_command *cmd = db_command_table;
 
@@ -447,7 +447,7 @@ db_exec_cmd_nest(cmd, size)
 }
 
 void db_error(s)
-	char *s;
+	const char *s;
 {
 	extern int db_macro_level;
 
@@ -471,7 +471,7 @@ void db_error(s)
  * !expr(arg,arg,arg)
  */
 void
-db_fncall()
+db_fncall(void)
 {
 	db_expr_t	fn_addr;
 #define	MAXARGS		11
@@ -524,10 +524,10 @@ db_fncall()
 
 boolean_t
 db_option(modif, option)
-	char	*modif;
-	int	option;
+	const char	*modif;
+	int		option;
 {
-	char *p;
+	const char *p;
 
 	for (p = modif; *p; p++)
 	    if (*p == option)

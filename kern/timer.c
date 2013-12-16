@@ -45,7 +45,7 @@ timer_data_t	kernel_timer[NCPUS];
  *	service routine on the callout queue.  All timers must be
  *	serviced by the callout routine once an hour.
  */
-void init_timers()
+void init_timers(void)
 {
 	int	i;
 	timer_t	this_timer;
@@ -147,7 +147,7 @@ unsigned ts;
  *	user mode.
  */
 void
-time_trap_uexit(ts)
+time_trap_uexit(int ts)
 {
 	int	elapsed;
 	int	mycpu;

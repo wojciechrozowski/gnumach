@@ -59,7 +59,7 @@ db_expr_t	db_macro_args[DB_MACRO_LEVEL][DB_NARGS];
 
 static struct db_user_macro *
 db_lookup_macro(name)
-	char *name;
+	const char *name;
 {
 	struct db_user_macro *mp;
 
@@ -73,7 +73,7 @@ db_lookup_macro(name)
 }
 
 void
-db_def_macro_cmd()
+db_def_macro_cmd(void)
 {
 	char *p;
 	int c;
@@ -104,7 +104,7 @@ db_def_macro_cmd()
 }
 
 void
-db_del_macro_cmd()
+db_del_macro_cmd(void)
 {
 	struct db_user_macro *mp;
 
@@ -120,7 +120,7 @@ db_del_macro_cmd()
 }
 
 void
-db_show_macro()
+db_show_macro(void)
 {
 	struct db_user_macro *mp;
 	int  t;
@@ -141,7 +141,7 @@ db_show_macro()
 
 int
 db_exec_macro(name)
-	char *name;
+	const char *name;
 {
 	struct db_user_macro *mp;
 	int n;

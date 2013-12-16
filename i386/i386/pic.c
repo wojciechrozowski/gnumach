@@ -102,7 +102,7 @@ u_short PICM_ICW4, PICS_ICW4 ;
 */
 
 void
-picinit()
+picinit(void)
 {
 
 	asm("cli");
@@ -220,7 +220,7 @@ picinit()
 #define SLAVEACTV	0xFF00
 
 void
-form_pic_mask()
+form_pic_mask(void)
 {
 	unsigned int i, j, bit, mask;
 
@@ -237,7 +237,7 @@ form_pic_mask()
 }
 
 void
-intnull(unit_dev)
+intnull(int unit_dev)
 {
 	printf("intnull(%d)\n", unit_dev);
 }
@@ -245,7 +245,7 @@ intnull(unit_dev)
 int prtnull_count = 0;
 
 void
-prtnull(unit)
+prtnull(int unit)
 {
 	++prtnull_count;
 }

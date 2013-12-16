@@ -41,9 +41,9 @@
 #include <machine/setjmp.h>
 
 extern void		db_command_loop(void);
-extern boolean_t	db_option(char *, int);
+extern boolean_t	db_option(const char *, int);
 
-extern void		db_error(char *);	/* report error */
+extern void		db_error(const char *) __attribute__ ((noreturn));	/* report error */
 
 extern db_addr_t	db_dot;		/* current location */
 extern db_addr_t	db_last_addr;	/* last explicit address typed */
@@ -69,7 +69,7 @@ struct db_command {
 
 extern boolean_t db_exec_cmd_nest(char *cmd, int size);
 
-void db_fncall();
+void db_fncall(void);
 
 void db_help_cmd(void);
 

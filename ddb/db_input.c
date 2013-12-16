@@ -69,8 +69,8 @@ char *  db_history_prev = (char *) 0;	/* start of previous line */
 
 void
 db_putstring(s, count)
-	char	*s;
-	int	count;
+	const char	*s;
+	int		count;
 {
 	while (--count >= 0)
 	    cnputc(*s++);
@@ -111,7 +111,7 @@ db_delete(n, bwd)
 }
 
 void
-db_delete_line()
+db_delete_line(void)
 {
 	db_delete(db_le - db_lc, DEL_FWD);
 	db_delete(db_lc - db_lbuf_start, DEL_BWD);
@@ -349,7 +349,7 @@ db_readline(lstart, lsize)
 }
 
 void
-db_check_interrupt()
+db_check_interrupt(void)
 {
 	int	c;
 

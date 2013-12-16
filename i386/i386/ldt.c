@@ -36,8 +36,7 @@
 #include "seg.h"
 #include "gdt.h"
 #include "ldt.h"
-
-extern int syscall();
+#include "locore.h"
 
 #ifdef	MACH_PV_DESCRIPTORS
 /* It is actually defined in xen_boothdr.S */
@@ -46,7 +45,7 @@ extern
 struct real_descriptor ldt[LDTSZ];
 
 void
-ldt_init()
+ldt_init(void)
 {
 #ifdef	MACH_PV_DESCRIPTORS
 #ifdef	MACH_PV_PAGETABLES

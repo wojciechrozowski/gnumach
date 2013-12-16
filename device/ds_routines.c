@@ -1516,7 +1516,7 @@ void iodone(ior)
 	splx(s);
 }
 
-void io_done_thread_continue()
+void io_done_thread_continue(void)
 {
 	for (;;) {
 	    spl_t		s;
@@ -1551,7 +1551,7 @@ void io_done_thread_continue()
 	}
 }
 
-void io_done_thread()
+void io_done_thread(void)
 {
 	/*
 	 * Set thread privileges and highest priority.
@@ -1568,7 +1568,7 @@ void io_done_thread()
 
 static void mach_device_trap_init(void);		/* forward */
 
-void mach_device_init()
+void mach_device_init(void)
 {
 	vm_offset_t	device_io_min, device_io_max;
 

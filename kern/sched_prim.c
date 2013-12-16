@@ -226,9 +226,7 @@ void assert_wait(
 	queue_t			q;
 	int			index;
 	thread_t		thread;
-#if	MACH_SLOCKS
-	simple_lock_t		lock;
-#endif	/* MACH_SLOCKS */
+	decl_simple_lock_data( , *lock);
 	spl_t			s;
 
 	thread = current_thread();
@@ -240,12 +238,10 @@ void assert_wait(
 	if (event != 0) {
 		index = wait_hash(event);
 		q = &wait_queue[index];
-#if	MACH_SLOCKS
 		lock = &wait_lock[index];
-#endif	/* MACH_SLOCKS */
 		simple_lock(lock);
 		thread_lock(thread);
-		enqueue_tail(q, (queue_entry_t) thread);
+		enqueue_tail(q, &(thread->links));
 		thread->wait_event = event;
 		if (interruptible)
 			thread->state |= TH_WAIT;
@@ -284,9 +280,7 @@ void clear_wait(
 {
 	int			index;
 	queue_t			q;
-#if	MACH_SLOCKS
-	simple_lock_t		lock;
-#endif	/* MACH_SLOCKS */
+	decl_simple_lock_data( , *lock);
 	event_t			event;
 	spl_t			s;
 
@@ -306,9 +300,7 @@ void clear_wait(
 		thread_unlock(thread);
 		index = wait_hash(event);
 		q = &wait_queue[index];
-#if	MACH_SLOCKS
 		lock = &wait_lock[index];
-#endif	/* MACH_SLOCKS */
 		simple_lock(lock);
 		/*
 		 *	If the thread is still waiting on that event,
@@ -387,18 +379,14 @@ void thread_wakeup_prim(
 	queue_t			q;
 	int			index;
 	thread_t		thread, next_th;
-#if	MACH_SLOCKS
-	simple_lock_t		lock;
-#endif  /* MACH_SLOCKS */
+	decl_simple_lock_data( , *lock);
 	spl_t			s;
 	int			state;
 
 	index = wait_hash(event);
 	q = &wait_queue[index];
 	s = splsched();
-#if	MACH_SLOCKS
 	lock = &wait_lock[index];
-#endif	/* MACH_SLOCKS */
 	simple_lock(lock);
 	thread = (thread_t) queue_first(q);
 	while (!queue_end(q, (queue_entry_t)thread)) {
@@ -1196,7 +1184,7 @@ void update_priority(
 									\
 	    simple_lock(&(rq)->lock);	/* lock the run queue */	\
 	    checkrq((rq), "thread_setrun: before adding thread");	\
-	    enqueue_tail(&(rq)->runq[whichq], (queue_entry_t) (th));	\
+	    enqueue_tail(&(rq)->runq[whichq], &((th)->links));		\
 									\
 	    if (whichq < (rq)->low || (rq)->count == 0) 		\
 		 (rq)->low = whichq;	/* minimize */			\
@@ -1219,7 +1207,7 @@ void update_priority(
 	    }								\
 									\
 	    simple_lock(&(rq)->lock);	/* lock the run queue */	\
-	    enqueue_tail(&(rq)->runq[whichq], (queue_entry_t) (th));	\
+	    enqueue_tail(&(rq)->runq[whichq], &((th)->links));		\
 									\
 	    if (whichq < (rq)->low || (rq)->count == 0) 		\
 		 (rq)->low = whichq;	/* minimize */			\

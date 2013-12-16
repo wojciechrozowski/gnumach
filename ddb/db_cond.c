@@ -105,7 +105,7 @@ db_cond_check(bkpt)
 
 void
 db_cond_print(bkpt)
-	db_thread_breakpoint_t bkpt;
+	const db_thread_breakpoint_t bkpt;
 {
 	char *p, *ep;
 	struct db_cond *cp;
@@ -123,7 +123,7 @@ db_cond_print(bkpt)
 }
 
 void
-db_cond_cmd()
+db_cond_cmd(void)
 {
 	int c;
 	struct db_cond *cp;

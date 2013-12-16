@@ -420,7 +420,7 @@ unsigned int	inuse_ptepages_count = 0;	/* debugging */
 pt_entry_t *kernel_page_dir;
 
 static inline pt_entry_t *
-pmap_pde(pmap_t pmap, vm_offset_t addr)
+pmap_pde(const pmap_t pmap, vm_offset_t addr)
 {
 	if (pmap == kernel_pmap)
 		addr = kvtolin(addr);
@@ -435,7 +435,7 @@ pmap_pde(pmap_t pmap, vm_offset_t addr)
  *	This is only used internally.
  */
 pt_entry_t *
-pmap_pte(pmap_t pmap, vm_offset_t addr)
+pmap_pte(const pmap_t pmap, vm_offset_t addr)
 {
 	pt_entry_t	*ptp;
 	pt_entry_t	pte;
@@ -573,7 +573,7 @@ vm_offset_t pmap_map_bd(virt, start, end, prot)
  *	and direct-map all physical memory.
  *	Called with mapping off.
  */
-void pmap_bootstrap()
+void pmap_bootstrap(void)
 {
 	/*
 	 * Mapping is turned off; we must reference only physical addresses.
@@ -897,7 +897,7 @@ void pmap_virtual_space(startp, endp)
  *	Called by vm_init, to initialize any structures that the pmap
  *	system needs to map virtual memory.
  */
-void pmap_init()
+void pmap_init(void)
 {
 	long			npages;
 	vm_offset_t		addr;
@@ -996,7 +996,7 @@ boolean_t pmap_verify_free(phys)
  *	since these must be unlocked to use vm_page_grab.
  */
 vm_offset_t
-pmap_page_table_page_alloc()
+pmap_page_table_page_alloc(void)
 {
 	vm_page_t	m;
 	vm_offset_t	pa;
@@ -2790,7 +2790,7 @@ void pmap_update_interrupt(void)
 /*
  *	Dummy routine to satisfy external reference.
  */
-void pmap_update_interrupt()
+void pmap_update_interrupt(void)
 {
 	/* should never be called. */
 }
@@ -2799,7 +2799,7 @@ void pmap_update_interrupt()
 #if defined(__i386__)
 /* Unmap page 0 to trap NULL references.  */
 void
-pmap_unmap_page_zero ()
+pmap_unmap_page_zero (void)
 {
   int *pte;
 
