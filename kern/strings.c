@@ -53,7 +53,7 @@
  *	contents are identical upto the length of s1.
  */
 
-int
+int __attribute__ ((pure))
 strcmp(
 	const char *s1,
 	const char *s2)
@@ -80,7 +80,7 @@ strcmp(
  *	comparison runs for at most "n" characters.
  */
 
-int
+int __attribute__ ((pure))
 strncmp(
 	const char *s1,
 	const char *s2,
@@ -161,7 +161,7 @@ strncpy(
  *	the terminating null character.
  */
 
-size_t
+size_t __attribute__ ((pure))
 strlen(
 	const char *string)
 {

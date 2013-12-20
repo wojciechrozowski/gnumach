@@ -69,7 +69,7 @@ extern void	thread_sleep(
 	event_t		event,
 	simple_lock_t	lock,
 	boolean_t	interruptible);
-extern void	thread_wakeup();		/* for function pointers */
+extern void	thread_wakeup(void);		/* for function pointers */
 extern void	thread_wakeup_prim(
 	event_t		event,
 	boolean_t	one_thread,
@@ -103,7 +103,7 @@ extern boolean_t thread_handoff(
 	thread_t	old_thread,
 	continuation_t	continuation,
 	thread_t	new_thread);
-extern void	recompute_priorities();
+extern void	recompute_priorities(const void *param);
 extern void	update_priority(
 	thread_t	thread);
 extern void	compute_my_priority(
@@ -132,13 +132,10 @@ extern void thread_timeout_setup(
  *	Machine-dependent code must define these functions.
  */
 
-extern void	thread_bootstrap_return(void);
-extern void	thread_exception_return(void);
-#ifdef	__GNUC__
+extern void	thread_bootstrap_return(void) __attribute__((noreturn));
+extern void	thread_exception_return(void) __attribute__((noreturn));
 extern void 	__attribute__((__noreturn__)) thread_syscall_return(kern_return_t);
-#else
-extern void	thread_syscall_return(kern_return_t);
-#endif
+
 extern thread_t	switch_context(
 	thread_t	old_thread,
 	continuation_t	continuation,
@@ -181,7 +178,7 @@ void checkrq(run_queue_t rq, char *msg);
 void thread_check(thread_t th, run_queue_t rq);
 #endif /* DEBUG */
 
-extern void idle_thread(void);
+extern void idle_thread(void) __attribute__((noreturn));
 extern void sched_thread(void);
 
 #endif	/* _KERN_SCHED_PRIM_H_ */

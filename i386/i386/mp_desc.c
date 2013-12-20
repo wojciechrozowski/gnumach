@@ -171,7 +171,7 @@ mp_desc_init(mycpu)
  * is running.  The machine array must show which CPUs exist.
  */
 void
-interrupt_stack_alloc()
+interrupt_stack_alloc(void)
 {
 	int		i;
 	int		cpu_count;
@@ -238,7 +238,7 @@ simple_lock_pause(void)
 }
 
 kern_return_t
-cpu_control(int cpu, int *info, unsigned int count)
+cpu_control(int cpu, const int *info, unsigned int count)
 {
 	printf("cpu_control(%d, %p, %d) not implemented\n",
 	       cpu, info, count);

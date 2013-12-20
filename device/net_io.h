@@ -74,7 +74,7 @@ extern void net_kmsg_put(ipc_kmsg_t);
  * Network utility routines.
  */
 
-extern void net_ast();
+extern void net_ast(void);
 extern void net_packet(struct ifnet *, ipc_kmsg_t, unsigned int, boolean_t);
 extern void net_filter(ipc_kmsg_t, ipc_kmsg_queue_t);
 extern io_return_t net_getstat(struct ifnet *, dev_flavor_t, dev_status_t,
@@ -90,7 +90,7 @@ extern vm_size_t net_kmsg_size;
 extern void net_kmsg_collect (void);
 
 extern void net_io_init(void);
-extern void net_thread(void);
+extern void net_thread(void) __attribute__ ((noreturn));
 
 #define net_kmsg_alloc()	((ipc_kmsg_t) kalloc(net_kmsg_size))
 #define net_kmsg_free(kmsg)	kfree((vm_offset_t) (kmsg), net_kmsg_size)
@@ -100,14 +100,14 @@ extern unsigned short int	ntohs(unsigned short int);
 extern unsigned int		htonl(unsigned int);
 extern unsigned short int	htons(unsigned short int);
 
-unsigned int bpf_hash(int n, unsigned int *keys);
+unsigned int bpf_hash(int n, const unsigned int *keys);
 
 extern boolean_t
 net_do_filter(
 	net_rcv_port_t	infp,
-	char *		data,
+	const char *	data,
 	unsigned int	data_count,
-	char *		header); /* CSPF */
+	const char *	header); /* CSPF */
 
 extern int
 bpf_do_filter(
@@ -145,7 +145,7 @@ int net_add_q_info(ipc_port_t rcv_port);
 int bpf_match (
 	net_hash_header_t 	hash,
 	int 			n_keys,
-	unsigned int 		*keys,
+	const unsigned int 	*keys,
 	net_hash_entry_t 	**hash_headpp,
 	net_hash_entry_t 	*entpp);
 

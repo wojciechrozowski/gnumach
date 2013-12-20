@@ -82,8 +82,8 @@ static mach_port_t	boot_host_port;		/* local name */
 
 extern char *kernel_cmdline;
 
-static void user_bootstrap();	/* forward */
-static void user_bootstrap_compat();	/* forward */
+static void user_bootstrap(void);	/* forward */
+static void user_bootstrap_compat(void);	/* forward */
 static void bootstrap_exec_compat(void *exec_data); /* forward */
 static void get_compat_strings(char *flags_str, char *root_str); /* forward */
 
@@ -587,7 +587,7 @@ build_args_and_stack(struct exec_info *boot_exec_info,
 	/*
 	 * first the argument count
 	 */
-	(void) copyout((char *)&arg_count,
+	(void) copyout(&arg_count,
 			arg_pos,
 			sizeof(integer_t));
 	arg_pos += sizeof(integer_t);
@@ -600,7 +600,7 @@ build_args_and_stack(struct exec_info *boot_exec_info,
 	    arg_item_len = strlen(arg_ptr) + 1; /* include trailing 0 */
 
 	    /* set string pointer */
-	    (void) copyout((char *)&string_pos,
+	    (void) copyout(&string_pos,
 			arg_pos,
 			sizeof (char *));
 	    arg_pos += sizeof(char *);
@@ -613,7 +613,7 @@ build_args_and_stack(struct exec_info *boot_exec_info,
 	/*
 	 * Null terminator for argv.
 	 */
-	(void) copyout((char *)&zero, arg_pos, sizeof(char *));
+	(void) copyout(&zero, arg_pos, sizeof(char *));
 	arg_pos += sizeof(char *);
 
 	/*
@@ -624,7 +624,7 @@ build_args_and_stack(struct exec_info *boot_exec_info,
 	    arg_item_len = strlen(arg_ptr) + 1; /* include trailing 0 */
 
 	    /* set string pointer */
-	    (void) copyout((char *)&string_pos,
+	    (void) copyout(&string_pos,
 			arg_pos,
 			sizeof (char *));
 	    arg_pos += sizeof(char *);
@@ -637,7 +637,7 @@ build_args_and_stack(struct exec_info *boot_exec_info,
 	/*
 	 * Null terminator for envp.
 	 */
-	(void) copyout((char *)&zero, arg_pos, sizeof(char *));
+	(void) copyout(&zero, arg_pos, sizeof(char *));
 }
 
 

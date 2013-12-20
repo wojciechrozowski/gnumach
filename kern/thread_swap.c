@@ -97,7 +97,7 @@ void thread_swapin(thread)
 		thread->state = (thread->state & ~TH_SWAP_STATE)
 				| TH_SW_COMING_IN;
 		swapper_lock();
-		enqueue_tail(&swapin_queue, (queue_entry_t) thread);
+		enqueue_tail(&swapin_queue, &(thread->links));
 		swapper_unlock();
 		thread_wakeup((event_t) &swapin_queue);
 		break;
@@ -154,7 +154,7 @@ void thread_doswapin(thread)
  *	This procedure executes as a kernel thread.  Threads that need to
  *	be swapped in are swapped in by this thread.
  */
-void swapin_thread_continue(void)
+void __attribute__((noreturn)) swapin_thread_continue(void)
 {
 	for (;;) {
 		thread_t thread;

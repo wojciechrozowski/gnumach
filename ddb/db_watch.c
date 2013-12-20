@@ -65,7 +65,7 @@ db_watchpoint_t		db_watchpoint_list = 0;
 extern vm_map_t		kernel_map;
 
 db_watchpoint_t
-db_watchpoint_alloc()
+db_watchpoint_alloc(void)
 {
 	db_watchpoint_t	watch;
 
@@ -242,7 +242,6 @@ db_watchpoint_cmd(addr, have_addr, count, modif)
 	vm_size_t	size;
 	db_expr_t	value;
 	task_t		task;
-	boolean_t	db_option();
 
 	if (db_get_task(modif, &task, addr) < 0)
 	    return;

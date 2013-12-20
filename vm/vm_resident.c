@@ -918,7 +918,7 @@ vm_page_t vm_page_grab(
 	return mem;
 }
 
-vm_offset_t vm_page_grab_phys_addr()
+vm_offset_t vm_page_grab_phys_addr(void)
 {
 	vm_page_t p = vm_page_grab(FALSE);
 	if (p == VM_PAGE_NULL)
@@ -1505,7 +1505,7 @@ vm_page_info(
  *	Routine:	vm_page_print [exported]
  */
 void		vm_page_print(p)
-	vm_page_t	p;
+	const vm_page_t	p;
 {
 	iprintf("Page 0x%X: object 0x%X,", (vm_offset_t) p, (vm_offset_t) p->object);
 	 printf(" offset 0x%X", p->offset);

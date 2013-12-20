@@ -98,7 +98,7 @@ evc_destroy(evc_t	ev)
  * Thread termination.
  * HORRIBLE. This stuff needs to be fixed.
  */
-void evc_notify_abort(thread_t thread)
+void evc_notify_abort(const thread_t thread)
 {
     int i;
     evc_t ev;
@@ -123,7 +123,7 @@ void evc_notify_abort(thread_t thread)
  * Just so that we return success, and give
  * up the stack while blocked
  */
-static void
+static void  __attribute__((noreturn))
 evc_continue(void)
 {
 	thread_syscall_return(KERN_SUCCESS);
@@ -340,7 +340,7 @@ simpler_thread_setrun(
 
 	whichq = (th)->sched_pri;
 	simple_lock(&(rq)->lock);	/* lock the run queue */
-	enqueue_head(&(rq)->runq[whichq], (queue_entry_t) (th));
+	enqueue_head(&(rq)->runq[whichq], &((th)->links));
 
 	if (whichq < (rq)->low || (rq)->count == 0)
 		 (rq)->low = whichq;	/* minimize */

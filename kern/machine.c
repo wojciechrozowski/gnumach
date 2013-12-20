@@ -126,8 +126,8 @@ void cpu_down(cpu)
 
 kern_return_t
 host_reboot(host, options)
-	host_t	host;
-	int	options;
+	const host_t	host;
+	int		options;
 {
 	if (host == HOST_NULL)
 		return (KERN_INVALID_HOST);
@@ -361,7 +361,7 @@ processor_t	processor;
 /*
  *	action_thread() shuts down processors or changes their assignment.
  */
-void action_thread_continue()
+void action_thread_continue(void)
 {
 	processor_t	processor;
 	spl_t		s;
@@ -390,7 +390,7 @@ void action_thread_continue()
 	}
 }
 
-void action_thread()
+void __attribute__((noreturn)) action_thread(void)
 {
 	action_thread_continue();
 	/*NOTREACHED*/
