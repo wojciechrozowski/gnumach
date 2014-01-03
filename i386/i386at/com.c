@@ -338,6 +338,8 @@ io_return_t comopen(
 	     */
 	    if (!com_reprobe(unit))
 		return D_NO_SUCH_DEVICE;
+	    if ((isai = cominfo[unit]) == 0 || isai->alive == 0)
+		return D_NO_SUCH_DEVICE;
 	}
 	tp = &com_tty[unit];
 
@@ -616,7 +618,7 @@ void
 comstart(tp)
 struct tty *tp;
 {
-	char nch;
+	int nch;
 #if 0
 	int i;
 #endif
@@ -652,6 +654,8 @@ comst_4++;
 	}
 #else
 	nch = getc(&tp->t_outq);
+	if (nch == -1)
+		return;
 	if ((nch & 0200) && ((tp->t_flags & LITOUT) == 0)) {
 	    timeout((timer_func_t *)ttrstrt, (char *)tp, (nch & 0x7f) + 6);
 	    tp->t_state |= TS_TIMEOUT;

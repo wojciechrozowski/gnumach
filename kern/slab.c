@@ -165,7 +165,7 @@
 /*
  * Size of the VM submap from which default backend functions allocate.
  */
-#define KMEM_MAP_SIZE (128 * 1024 * 1024)
+#define KMEM_MAP_SIZE (96 * 1024 * 1024)
 
 /*
  * Shift for the first kalloc cache size.
@@ -289,8 +289,8 @@ vm_map_t kmem_map = &kmem_map_store;
 static unsigned long kmem_gc_last_tick;
 
 #define kmem_error(format, ...)                         \
-    printf("mem: error: %s(): " format "\n", __func__,  \
-           ## __VA_ARGS__)
+    panic("mem: error: %s(): " format "\n", __func__,   \
+          ## __VA_ARGS__)
 
 #define kmem_warn(format, ...)                              \
     printf("mem: warning: %s(): " format "\n", __func__,    \
@@ -662,7 +662,7 @@ static void kmem_cache_error(struct kmem_cache *cache, void *buf, int error,
 {
     struct kmem_buftag *buftag;
 
-    kmem_error("cache: %s, buffer: %p", cache->name, (void *)buf);
+    kmem_warn("cache: %s, buffer: %p", cache->name, (void *)buf);
 
     switch(error) {
     case KMEM_ERR_INVALID:
