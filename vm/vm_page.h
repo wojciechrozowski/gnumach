@@ -84,7 +84,7 @@ struct vm_page {
 	vm_object_t	object;		/* which object am I in (O,P) */
 	vm_offset_t	offset;		/* offset into that object (O,P) */
 
-	unsigned int	wire_count:16,	/* how many wired down maps use me?
+	unsigned int	wire_count:15,	/* how many wired down maps use me?
 					   (O&P) */
 	/* boolean_t */	inactive:1,	/* page is in inactive list (P) */
 			active:1,	/* page is in active list (P) */
@@ -92,14 +92,8 @@ struct vm_page {
 			free:1,		/* page is on free list (P) */
 			reference:1,	/* page has been used (P) */
 			external:1,	/* page considered external (P) */
-		        extcounted:1,   /* page counted in ext counts (P) */
-			:0;		/* (force to 'long' boundary) */
-#ifdef	ns32000
-	int		pad;		/* extra space for ns32000 bit ops */
-#endif	/* ns32000 */
-
-	unsigned int
-	/* boolean_t */	busy:1,		/* page is in transit (O) */
+			extcounted:1,   /* page counted in ext counts (P) */
+			busy:1,		/* page is in transit (O) */
 			wanted:1,	/* someone is waiting for page (O) */
 			tabled:1,	/* page is in VP table (O) */
 			fictitious:1,	/* Physical page doesn't exist (O) */
@@ -112,10 +106,9 @@ struct vm_page {
 			dirty:1,	/* Page must be cleaned (O) */
 			precious:1,	/* Page is precious; data must be
 					 *  returned even if clean (O) */
-			overwriting:1,	/* Request to unlock has been made
+			overwriting:1;	/* Request to unlock has been made
 					 * without having data. (O)
 					 * [See vm_object_overwrite] */
-			:0;
 
 	vm_offset_t	phys_addr;	/* Physical address of page, passed
 					 *  to pmap_enter (read-only) */
