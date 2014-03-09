@@ -56,6 +56,7 @@
 #include <device/device_pager.server.h>
 #include <kern/mach4.server.h>
 #include <kern/gnumach.server.h>
+#include <kern/experimental.server.h>
 
 #if MACH_DEBUG
 #include <kern/mach_debug.server.h>
@@ -158,7 +159,6 @@ ipc_kobject_server(request)
 	 * to perform the kernel function
 	 */
     {
-	extern mig_routine_t	experimental_server_routine();
 #if	MACH_MACHINE_ROUTINES
 	extern mig_routine_t	MACHINE_SERVER_ROUTINE();
 #endif
